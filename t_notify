@@ -3,7 +3,7 @@
 # Notification tool for the simple todo list manager
 
 # Tasks directory
-TASKDIR=~/.cache/tasks
+TASKDIR=~/.local/share/tasks
 # Need at least two files in the directory for this to make sense
 # one is the file containing the current taskfiles name
 # one is the current taskfile
@@ -20,12 +20,12 @@ notify() {
     TASKFILE=$TASKDIR/$1
 
     # Get the due_dates
-    due_dates=$(grep -o '[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]' "$TASKFILE")
+    due_dates=$(grep -o '[0-9][0-9]\-[0-9][0-9]\-[0-9][0-9]' "$TASKFILE")
 
     # Dates that are close
-    today=$(date '+%d.%m.%y')
-    tomorrow=$(date -d "+1 day" '+%d.%m.%y')
-    in_two_days=$(date -d "+2 days" '+%d.%m.%y')
+    today=$(date '+%d-%m-%y')
+    tomorrow=$(date -d "+1 day" '+%d-%m-%y')
+    in_two_days=$(date -d "+2 days" '+%d-%m-%y')
     close_dates="$today $tomorrow $in_two_days"
 
     # Check for matches

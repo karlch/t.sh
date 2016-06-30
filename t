@@ -3,7 +3,7 @@
 # A very simple todo list manager
 
 # Make the tasks directory
-TASKDIR=~/.cache/tasks
+TASKDIR=~/.local/share/tasks
 mkdir -p $TASKDIR
 
 # Find out the Taskfile and create default one if it doesn't exist
@@ -32,7 +32,7 @@ new_task() {
         read -n2 -r -p "  Year: " year
         printf "\n"
 
-        printf "  (%s.%s.%s)" "$day" "$month" "$year" >> "$TASKFILE"
+        printf "  (%s-%s-%s)" "$day" "$month" "$year" >> "$TASKFILE"
     fi
 
     printf "\n" >> "$TASKFILE"
@@ -46,22 +46,22 @@ if [[ $@ ]]; then
     # Finish the tasks given in sed format
     f)  sed -i "$2 d" "$TASKFILE"
         ;;
-    # Sed substitution to edit the task
-    s)  sed -i "$2 s/$3/${*:4}/g" "$TASKFILE"
-        ;;
-    # Change the task completely
-    c)  sed -i "$2 s/.*/${*:3} ($(date --iso-8601))/g" "$TASKFILE"
-        ;;
-    # Open TASKFILE in editor
-    e)  "$EDITOR" "$TASKFILE"
+    # List taskfiles
+    l)  ls $TASKDIR | grep -v taskfile
         ;;
     # Switch to a different TASKFILE
     t)  if [[ -n $2 ]]; then printf "%s" "$2" > $TASKDIR/taskfile
         else printf "main" > $TASKDIR/taskfile  # Default
         fi
         ;;
-    # List taskfiles
-    l)  ls $TASKDIR | grep -v taskfile
+    # Open TASKFILE in editor
+    e)  "$EDITOR" "$TASKFILE"
+        ;;
+    # Change the task completely
+    c)  sed -i "$2 s/.*/${*:3}/g" "$TASKFILE"
+        ;;
+    # Sed substitution to edit the task
+    s)  sed -i "$2 s/$3/${*:4}/g" "$TASKFILE"
         ;;
     # Append the task to the task list
     *)  new_task "$*"
