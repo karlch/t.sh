@@ -7,7 +7,7 @@ TASKDIR=~/.local/share/tasks
 # Need at least two files in the directory for this to make sense
 # one is the file containing the current taskfiles name
 # one is the current taskfile
-if [[ $(ls $TASKDIR | wc -l) -lt 2 ]]; then
+if [[ $(find $TASKDIR | wc -l) -lt 2 ]]; then
     printf "No tasks to check for available.\n"
     exit 1
 fi
@@ -56,15 +56,13 @@ notify() {
     close_tasks=$(printf "%s" "$close_tasks" | sort | uniq)
 
     # Send a notification for all tasks due soon
-    IFS=$'\n'
-    for task in $close_tasks; do
+    while read -r task; do
         notify-send -u critical -h string:iconname:"$TASKFILE" "$task"
-    done
-    # Reset IFS
-    IFS=$'\n\t '
+    done <<< "$close_tasks"
 }
 
 # Notify for each taskfile
-for taskfile in $(ls $TASKDIR | grep -v taskfile); do
-    notify $taskfile
-done
+while read -r taskfile; do
+    notify "$taskfile"
+done <<< \
+    "$(find $TASKDIR -mindepth 1 -name "taskfile" -prune -o -printf "%f\n")"
