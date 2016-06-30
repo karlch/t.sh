@@ -56,9 +56,11 @@ notify() {
     close_tasks=$(printf "%s" "$close_tasks" | sort | uniq)
 
     # Send a notification for all tasks due soon
-    while read -r task; do
-        notify-send -u critical -h string:iconname:"$TASKFILE" "$task"
-    done <<< "$close_tasks"
+    if [[ -n "$close_tasks" ]]; then
+        while read -r task; do
+            notify-send -u critical -h string:iconname:"$TASKFILE" "$task"
+        done <<< "$close_tasks"
+    fi
 }
 
 # Notify for each taskfile
