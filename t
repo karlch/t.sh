@@ -77,7 +77,8 @@ if [[ $@ ]]; then
     f)  sed -i "$2 d" "$TASKFILE"
         ;;
     # List taskfiles
-    l)  find "$TASKDIR" -name "taskfile" -prune -o -printf "%f (%Td-%Tm-%Ty)\n"
+    l)  find "$TASKDIR" -mindepth 1 -name "taskfile" -prune \
+            -o -printf "%f (%Td-%Tm-%Ty)\n"
         ;;
     # Switch to a different TASKFILE
     t)  switch_taskfile "$2"
