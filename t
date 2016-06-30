@@ -38,6 +38,36 @@ new_task() {
     printf "\n" >> "$TASKFILE"
 }
 
+# Switch to a taskfile
+# Argument: filename
+switch_taskfile() {
+    if [[ -n $1 ]]; then
+        printf "%s" "$1" > $TASKDIR/taskfile
+    else
+        printf "main" > $TASKDIR/taskfile  # Default
+    fi
+    # Create taskfile if it doesn't exist
+    if [[ ! -s "$TASKDIR/$1" ]]; then
+        touch "$TASKDIR/$1"
+    fi
+}
+
+# Removes a taskfile
+# Argument: filename
+remove_taskfile() {
+    local taskfile=$TASKDIR/$1
+    if [[ -s $taskfile ]]; then
+        read -n1 -r -p "Taskfile is not empty, delete anyway? [yN] " delete
+        printf "\n"
+        if [[ $delete != "y" && $delete != "Y" ]]; then exit 1; fi
+    fi
+    rm "$taskfile"
+    # Switch to main taskfile if the removed one is the current taskfile
+    if [[ $taskfile == "$TASKFILE" ]]; then
+        switch_taskfile
+    fi
+}
+
 # Check if an argument was given
 if [[ $@ ]]; then
 
@@ -50,12 +80,13 @@ if [[ $@ ]]; then
     l)  ls $TASKDIR | grep -v taskfile
         ;;
     # Switch to a different TASKFILE
-    t)  if [[ -n $2 ]]; then printf "%s" "$2" > $TASKDIR/taskfile
-        else printf "main" > $TASKDIR/taskfile  # Default
-        fi
+    t)  switch_taskfile "$2"
         ;;
     # Open TASKFILE in editor
     e)  "$EDITOR" "$TASKFILE"
+        ;;
+    # Remove a taskfile
+    r)  remove_taskfile "$2"
         ;;
     # Change the task completely
     c)  sed -i "$2 s/.*/${*:3}/g" "$TASKFILE"
