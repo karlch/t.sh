@@ -22,6 +22,7 @@ manipulation and reading with other tools nice and easy.
 ## Installation
 
 **Requirements**
+
 For t:
 
 * bash (other shells might work)
@@ -88,9 +89,8 @@ To finish a task run `t f $tasknum`. This is where the line numbers displayed by
 
 **List all taskfiles**
 
-As it is possible to have multiple taskfile there is a way to list all of the
-possible files: `t l`. The date appended shows the date when the file was last
-modified.
+As it is possible to have multiple taskfiles, there is a way to list all of
+them: `t l`. The date appended shows the date when the file was last modified.
 
     $ t l
     vimiv (30-06-16)
@@ -119,7 +119,7 @@ $filename`. If no filename is provided, the default main is used.
 **Edit multiple tasks**
 
 As everything is saved in plain text and you probably have your favourite tool
-to edit text `t e` opens the current taskfile in $EDITOR. Note that the
+to edit text, `t e` opens the current taskfile in $EDITOR. Note that the
 corresponding environment variable must be set.
 
 
@@ -128,15 +128,20 @@ corresponding environment variable must be set.
 To completely change the text of one task run `t c $tasknum the new text`.
 
     $ t c 3 Learn how to use latex beamer
+    Keep current date? [Yn] y                                                                               ~ >> t c 2 Come back to mars early!
+    $ t c 2 Come back to mars early!
+    Keep current date? [Yn] n
+    Enter day, month and year in two digit format.
+    Day: 04  Month: 02  Year: 18
     $ t
     Tasks in demolist
     ────────────────────────────────────────────────────────────────────────────────
     1) Visit the restaurant at the end of the universe
-    2) Come back to earth (04-02-42)
+    2) Come back to mars early!  (04-02-18)
     3) Learn how to use latex beamer  (14-07-17)
     $
 
-As you can see the entered date is preserved.
+As you can see the entered date can be preserved or changed.
 
 **Substitute string in task**
 
