@@ -10,8 +10,11 @@ mkdir -p $TASKDIR
 make_task_file() {
     printf "main\n" > $TASKDIR/taskfile
     TASKFILE=$TASKDIR/main
+    if [[ ! -s $TASKDIR/main ]]; then
+        touch $TASKDIR/main
+    fi
 }
-TASKFILE=$TASKDIR/$(cat $TASKDIR/taskfile) || make_task_file
+TASKFILE=$TASKDIR/$(cat $TASKDIR/taskfile 2>/dev/null) || make_task_file
 
 # Read a date from the user
 read_date() {
