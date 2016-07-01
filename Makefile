@@ -31,7 +31,7 @@ install:
 	cp t_notify.sh $(DESTDIR)$(PREFIX)bin/
 	chmod 755 $(DESTDIR)$(PREFIX)bin/t.sh
 	chmod 755 $(DESTDIR)$(PREFIX)bin/t_notify.sh
-	@printf "It is recommended to setup an alias t=t.sh in your .shellrc.\n"
+	@printf "It is recommended to setup an alias t='t.sh' in your .shellrc.\n"
 
 install_timers:
 	mkdir -p $(DESTDIR)$(PREFIX)$(SYSTEMD)

@@ -4,8 +4,10 @@
 
 t comes with two scripts:
 
-* t: the actual task manager
-* t\_notify: sends notifications if a task is due soon
+* t.sh: the actual task manager
+* t\_notify.sh: sends notifications if a task is due soon
+
+It is recommended to set up an alias `alias t='t.sh'` in your .shellrc.
 
 t saves tasks with optional due dates in taskfiles. It is possible to manipulate
 and remove those tasks and to check for tasks which are due soon. Per default t
@@ -33,6 +35,8 @@ For t\_notify additionally:
 If all requirements are installed both scripts should run just fine. Move them
 to somewhere in your $PATH environment like ~/bin to be able to access them
 globally.
+
+To install t globally, use the Makefile included.
 
 ## Usage
 
