@@ -1,0 +1,6 @@
+[Unit]
+Description=Check for tasks due soon using t_notify.sh
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/t_notify.sh
