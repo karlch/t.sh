@@ -91,7 +91,7 @@ change_task() {
         sed -i "$tasknum s/.*\(  (\)/$new_text\1/g" "$TASKFILE"
         # Should it be preserved?
         read -n1 -r -p "Keep current date? [Yn] " keep_date
-        printf "\n"
+        printf "\n" >&2
 
         if [[ $keep_date == "n" || $keep_date == "N" ]]; then
             new_date=$(read_date)
