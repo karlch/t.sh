@@ -13,6 +13,20 @@ make_task_file() {
 }
 TASKFILE=$TASKDIR/$(cat $TASKDIR/taskfile) || make_task_file
 
+# Read a date from the user
+read_date() {
+    # The redirections to &2 are used so this part isn't actually read when
+    # calling the function
+    printf "Enter day, month and year in two digit format.\n" 1>&2
+
+    read -n2 -r -p "Day: " day
+    read -n2 -r -p "  Month: " month
+    read -n2 -r -p "  Year: " year
+    printf "\n" 1>&2
+
+    printf "(%s-%s-%s)" "$day" "$month" "$year"
+}
+
 # The function to enter a new task
 # Argument: task_text
 new_task() {
@@ -25,14 +39,9 @@ new_task() {
     printf "\n"
 
     if [[ $enter_date == "y" || $enter_date == "Y" ]]; then
-        printf "Enter day, month and year in two digit format.\n"
+        entered_date=$(read_date)
 
-        read -n2 -r -p "Day: " day
-        read -n2 -r -p "  Month: " month
-        read -n2 -r -p "  Year: " year
-        printf "\n"
-
-        printf "  (%s-%s-%s)" "$day" "$month" "$year" >> "$TASKFILE"
+        printf "  %s" "$entered_date" >> "$TASKFILE"
     fi
 
     printf "\n" >> "$TASKFILE"
@@ -68,6 +77,31 @@ remove_taskfile() {
     fi
 }
 
+# A function to change the task preserving the due_date if whished
+# Arguments: tasknum, new_text
+change_task() {
+    tasknum="$1"
+    new_text="$2"
+    old_text=$(sed "${tasknum}q;d" "$TASKFILE")
+
+    # Has a date?
+    if printf "%s\n" "$old_text" | grep "([0-9][0-9]-[0-9][0-9]-[0-9][0-9])"
+    then
+        # Substitute everything up to date
+        sed -i "$tasknum s/.*\(  (\)/$new_text\1/g" "$TASKFILE"
+        # Should it be preserved?
+        read -n1 -r -p "Keep current date? [Yn] " keep_date
+        printf "\n"
+
+        if [[ $keep_date == "n" || $keep_date == "N" ]]; then
+            new_date=$(read_date)
+            sed -i "$tasknum s/([0-9][0-9]-[0-9][0-9]-[0-9][0-9])/$new_date/" "$TASKFILE"
+        fi
+    else
+        sed -i "$tasknum s/.*/$new_text/g" "$TASKFILE"
+    fi
+}
+
 # Check if an argument was given
 if [[ $@ ]]; then
 
@@ -90,7 +124,7 @@ if [[ $@ ]]; then
     r)  remove_taskfile "$2"
         ;;
     # Change the task completely
-    c)  sed -i "$2 s/.*/${*:3}/g" "$TASKFILE"
+    c)  change_task "$2" "${*:3}" > /dev/null
         ;;
     # Sed substitution to edit the task
     s)  sed -i "$2 s/$3/${*:4}/g" "$TASKFILE"

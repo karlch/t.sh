@@ -4,7 +4,7 @@ TASKDIR=~/.local/share/tasks
 
 # Leave with an error message and cleaning up
 exit_tests() {
-    printf "%s.\n" "$1" 1>&2
+    printf "%s\n" "$1" 1>&2
     printf "Running tests failed.\n" 1>&2
     # Remove new taskfile manually
     rm $TASKDIR/new_task_list 2>/dev/null
@@ -25,7 +25,7 @@ run_tests() {
     find "$TASKDIR" -name "new_task_list" || exit_tests "Task list not created"
 
     # Add some tasks
-    printf "N" | ../t fancy new task
+    printf "y130717" | ../t fancy new task 2>&1
     printf "N" | ../t fancy second task
     printf "N" | ../t fancy third task
     # All there?
@@ -42,14 +42,18 @@ run_tests() {
     # t must be able to list the taskfile
     ../t l | grep "new_task_list" || exit_tests "New taskfile not listed."
 
-    # Change the second task
-    ../t c 2 different second task
+    # Change the second task preserving date
+    printf "y" | ../t c 2 different second task
     ../t | grep "2) different second task" || \
         exit_tests "Second task not changed."
+    # Change the first task changing date
+    printf "N140717" | ../t c 1 different new task 2>&1
+    ../t | grep "1) different new task  (14-07-17)" || \
+        exit_tests "First task with date not changed."
 
     # Substitute in the first task
     ../t s 1 new first
-    ../t | grep "1) fancy first task" || \
+    ../t | grep "1) different first task  (14-07-17)" || \
         exit_tests "First task text not substituted."
 
     # Finally remove the file with t
