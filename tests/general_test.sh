@@ -19,50 +19,50 @@ cd "$(dirname "$0")" || exit_tests "cd failed."
 # Actual testfunction
 run_tests() {
     # Create a new task list to work with
-    ../t t new_task_list
+    ../t.sh t new_task_list
 
     # The new task list must be in the tasks directory
     find "$TASKDIR" -name "new_task_list" || exit_tests "Task list not created"
 
     # Add some tasks
-    printf "y130717" | ../t fancy new task 2>&1
-    printf "N" | ../t fancy second task
-    printf "N" | ../t fancy third task
+    printf "y130717" | ../t.sh fancy new task 2>&1
+    printf "N" | ../t.sh fancy second task
+    printf "N" | ../t.sh fancy third task
     # All there?
-    if [[ $(../t | wc -l) != 5 ]]; then
+    if [[ $(../t.sh | wc -l) != 5 ]]; then
         exit_tests "3 tasks not created correctly."
     fi
 
     # Remove third task
-    ../t f 3
-    if [[ $(../t | wc -l) != 4 ]]; then
+    ../t.sh f 3
+    if [[ $(../t.sh | wc -l) != 4 ]]; then
         exit_tests "Task 3 not removed.\n" 
     fi
 
     # t must be able to list the taskfile
-    ../t l | grep "new_task_list" || exit_tests "New taskfile not listed."
+    ../t.sh l | grep "new_task_list" || exit_tests "New taskfile not listed."
 
     # Change the second task preserving date
-    printf "y" | ../t c 2 different second task
-    ../t | grep "2) different second task" || \
+    printf "y" | ../t.sh c 2 different second task
+    ../t.sh | grep "2) different second task" || \
         exit_tests "Second task not changed."
     # Change the first task changing date
-    printf "N140717" | ../t c 1 different new task 2>&1
-    ../t | grep "1) different new task  (14-07-17)" || \
+    printf "N140717" | ../t.sh c 1 different new task 2>&1
+    ../t.sh | grep "1) different new task  (14-07-17)" || \
         exit_tests "First task with date not changed."
 
     # Substitute in the first task
-    ../t s 1 new first
-    ../t | grep "1) different first task  (14-07-17)" || \
+    ../t.sh s 1 new first
+    ../t.sh | grep "1) different first task  (14-07-17)" || \
         exit_tests "First task text not substituted."
 
     # Finally remove the file with t
-    printf "y" | ../t r new_task_list
+    printf "y" | ../t.sh r new_task_list
     find "$TASKDIR" | grep "new_task_list" && \
         exit_tests "Task list was not removed."
 
     # And check if we are back to default
-    t | grep "main" || exit_tests "Switch to main failed."
+    ../t.sh | grep "main" || exit_tests "Switch to main failed."
 }
 
 printf "Running tests.\n...\n"
