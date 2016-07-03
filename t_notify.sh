@@ -44,7 +44,7 @@ notify() {
                 esac
 
                 # Use $1 here because this is the short name
-                close_task=$(printf "<b>%s:</b> %s" "$1" "$close_task" | \
+                close_task=$(printf "%s: %s" "$1" "$close_task" | \
                              sed "s/($due_date)/$due_format/")
 
                 close_tasks=$close_tasks$close_task$'\n'
