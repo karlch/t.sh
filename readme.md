@@ -50,7 +50,7 @@ will become clear soon.
     Tasks in demolist
     ────────────────────────────────────────────────────────────────────────────────
     1) Visit the restaurant at the end of the universe
-    2) Come back to earth (04-02-42)
+    2) Come back to earth  (2042-04-02)
     $
 
 **Add new tasks**
@@ -62,15 +62,14 @@ t\_notify can parse.
     Enter a due date? [y/N] n
     $ t Prepare talk
     Enter a due date? [y/N] y
-    Enter day, month and year in two digit format.
-    Day: 14  Month: 07  Year: 17
+    Enter a valid date (yy-mm-dd): 17-07-14
     $ t
     Tasks in demolist
     ────────────────────────────────────────────────────────────────────────────────
     1) Visit the restaurant at the end of the universe
-    2) Come back to earth (04-02-42)
+    2) Come back to earth  (2042-04-02)
     3) Keep calm and drink a beer
-    4) Prepare talk  (14-07-17)
+    4) Prepare talk  (2017-07-14)
     $
 
 **Finish tasks**
@@ -83,8 +82,8 @@ To finish a task run `t f $tasknum`. This is where the line numbers displayed by
     Tasks in demolist
     ────────────────────────────────────────────────────────────────────────────────
     1) Visit the restaurant at the end of the universe
-    2) Come back to earth (04-02-42)
-    3) Prepare talk  (14-07-17)
+    2) Come back to earth  (2042-04-02)
+    3) Prepare talk  (2017-07-14)
     $
 
 **List all taskfiles**
@@ -93,9 +92,9 @@ As it is possible to have multiple taskfiles, there is a way to list all of
 them: `t l`. The date appended shows the date when the file was last modified.
 
     $ t l
-    vimiv (30-06-16)
-    demolist (01-07-16)
-    main (30-06-16)
+    vimiv (01-07-16)
+    demolist (04-07-16)
+    main (04-07-16)
     $
 
 **Switch taskfile**
@@ -112,15 +111,36 @@ $filename`. If no filename is provided, the default main is used.
     Tasks in demolist
     ────────────────────────────────────────────────────────────────────────────────
     1) Visit the restaurant at the end of the universe
-    2) Come back to earth (04-02-42)
-    3) Prepare talk  (14-07-17)
+    2) Come back to earth  (2042-04-02)
+    3) Prepare talk  (2017-07-14)
     $
+
+**Remove taskfile**
+
+To remove a taskfile run `t r $filename`.
+
+    $ t l
+    vimiv (01-07-16)
+    demolist (04-07-16)
+    main (04-07-16)
+    demolist2 (04-07-16)
+    $ t r demolist2
+    $ t r demolist
+    Taskfile is not empty, delete anyway? [yN] n
+    $ t l
+    vimiv (01-07-16)
+    demolist (04-07-16)
+    main (04-07-16)
+    $
+
+If the taskfile is not empty t will prompt for confirmation.
 
 **Edit multiple tasks**
 
 As everything is saved in plain text and you probably have your favourite tool
 to edit text, `t e` opens the current taskfile in $EDITOR. Note that the
-corresponding environment variable must be set.
+corresponding environment variable must be set. If not set it will default to
+nano.
 
 
 **Change task text**
@@ -128,32 +148,32 @@ corresponding environment variable must be set.
 To completely change the text of one task run `t c $tasknum the new text`.
 
     $ t c 3 Learn how to use latex beamer
-    Keep current date? [Yn] y                                                                               ~ >> t c 2 Come back to mars early!
-    $ t c 2 Come back to mars early!
+    Keep current date? [Yn] y
+    $ t c 2 Come back to earth early!
     Keep current date? [Yn] n
-    Enter day, month and year in two digit format.
-    Day: 04  Month: 02  Year: 18
+    Enter a valid date (yy-mm-dd): 18-04-02
     $ t
     Tasks in demolist
     ────────────────────────────────────────────────────────────────────────────────
     1) Visit the restaurant at the end of the universe
-    2) Come back to mars early!  (04-02-18)
-    3) Learn how to use latex beamer  (14-07-17)
+    2) Come back to earth early!  (2018-04-02)
+    3) Learn how to use latex beamer  (2017-07-14)
     $
 
 As you can see the entered date can be preserved or changed.
 
 **Substitute string in task**
 
-If a simple sed substitution is enough run `t s $tasknume before after`.
+If a simple sed substitution is enough run `t s $tasknum before after`.
     
     $ t s 2 earth mars
     $ t
     Tasks in demolist
     ────────────────────────────────────────────────────────────────────────────────
     1) Visit the restaurant at the end of the universe
-    2) Come back to mars (04-02-42)
-    3) Learn how to use latex beamer
+    2) Come back to mars early!  (2018-04-02)
+    3) Learn how to use latex beamer  (2017-07-14)
+    $
 
 **Receive notifications**
 
