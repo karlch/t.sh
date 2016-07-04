@@ -133,13 +133,13 @@ To remove a taskfile run `t r $filename`.
     main (04-07-16)
     $
 
-If the taskfile is not empty t will prompt for confirmation.
+If the taskfile is not empty, t will prompt for confirmation.
 
 **Edit multiple tasks**
 
 As everything is saved in plain text and you probably have your favourite tool
 to edit text, `t e` opens the current taskfile in $EDITOR. Note that the
-corresponding environment variable must be set. If not set it will default to
+corresponding environment variable must be set. If not set, it will default to
 nano.
 
 
