@@ -20,12 +20,12 @@ notify() {
     TASKFILE=$TASKDIR/$1
 
     # Get the due_dates
-    due_dates=$(grep -o '[0-9][0-9]\-[0-9][0-9]\-[0-9][0-9]' "$TASKFILE")
+    due_dates=$(grep -o '20[0-9][0-9]\-[0-9][0-9]\-[0-9][0-9]' "$TASKFILE")
 
     # Dates that are close
-    today=$(date '+%d-%m-%y')
-    tomorrow=$(date -d "+1 day" '+%d-%m-%y')
-    in_two_days=$(date -d "+2 days" '+%d-%m-%y')
+    today=$(date '+%F')
+    tomorrow=$(date -d "+1 day" '+%F')
+    in_two_days=$(date -d "+2 days" '+%F')
     close_dates="$today $tomorrow $in_two_days"
 
     # Check for matches

@@ -18,7 +18,7 @@ run_shellcheck() {
 }
 
 printf "Starting testsuite.\n"
-cd .. || exit 1
+cd "$(dirname "$0")"/.. || exit 1
 
 for file in $shell_files; do
     run_shellcheck "$file"

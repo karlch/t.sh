@@ -16,18 +16,21 @@ make_task_file() {
 }
 TASKFILE=$TASKDIR/$(cat $TASKDIR/taskfile 2>/dev/null) || make_task_file
 
-# Read a date from the user
+# Read a date from the user making sure it is a real date
 read_date() {
-    # The redirections to &2 are used so this part isn't actually read when
-    # calling the function
-    printf "Enter day, month and year in two digit format.\n" 1>&2
-
-    read -n2 -r -p "Day: " day
-    read -n2 -r -p "  Month: " month
-    read -n2 -r -p "  Year: " year
-    printf "\n" 1>&2
-
-    printf "(%s-%s-%s)" "$day" "$month" "$year"
+    # Read until a user date is correct
+    while true; do
+        read -r -p "Enter a valid date (yy-mm-dd): " user_date
+        user_date=$(printf "20%s" "$user_date" | sed 's/[^0-9a-zA-Z]/-/g' | \
+                    grep "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9]") || continue
+        # Timestamps to compare
+        today=$(date -d "today" +%s)
+        user_date_num=$(date -d "$user_date" +%s) || continue
+        if [[ $user_date_num -ge "$today" ]]; then
+            printf "(%s)" "$user_date"
+            break
+        fi
+    done
 }
 
 # The function to enter a new task
@@ -88,7 +91,7 @@ change_task() {
     old_text=$(sed "${tasknum}q;d" "$TASKFILE")
 
     # Has a date?
-    if printf "%s\n" "$old_text" | grep "([0-9][0-9]-[0-9][0-9]-[0-9][0-9])"
+    if printf "%s\n" "$old_text" | grep -E "([0-9]{4}-[0-9]{2}-[0-9]{2})"
     then
         # Substitute everything up to date
         sed -i "$tasknum s/.*\(  (\)/$new_text\1/g" "$TASKFILE"
@@ -98,7 +101,7 @@ change_task() {
 
         if [[ $keep_date == "n" || $keep_date == "N" ]]; then
             new_date=$(read_date)
-            sed -i "$tasknum s/([0-9][0-9]-[0-9][0-9]-[0-9][0-9])/$new_date/" "$TASKFILE"
+            sed -i "$tasknum s/(20[0-9][0-9]-[0-9][0-9]-[0-9][0-9])/$new_date/" "$TASKFILE"
         fi
     else
         sed -i "$tasknum s/.*/$new_text/g" "$TASKFILE"

@@ -25,7 +25,7 @@ run_tests() {
     find "$TASKDIR" -name "new_task_list" || exit_tests "Task list not created"
 
     # Add some tasks
-    printf "y130717" | ../t.sh fancy new task 2>&1
+    printf "y17-07-13" | ../t.sh fancy new task
     printf "N" | ../t.sh fancy second task
     printf "N" | ../t.sh fancy third task
     # All there?
@@ -47,13 +47,13 @@ run_tests() {
     ../t.sh | grep "2) different second task" || \
         exit_tests "Second task not changed."
     # Change the first task changing date
-    printf "N140717" | ../t.sh c 1 different new task 2>&1
-    ../t.sh | grep "1) different new task  (14-07-17)" || \
+    printf "N17-07-14\n" | ../t.sh c 1 different new task 2>&1
+    ../t.sh | grep "1) different new task  (2017-07-14)" || \
         exit_tests "First task with date not changed."
 
     # Substitute in the first task
     ../t.sh s 1 new first
-    ../t.sh | grep "1) different first task  (14-07-17)" || \
+    ../t.sh | grep "1) different first task  (2017-07-14)" || \
         exit_tests "First task text not substituted."
 
     # Finally remove the file with t
