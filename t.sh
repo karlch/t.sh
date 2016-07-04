@@ -22,11 +22,11 @@ read_date() {
     while true; do
         read -r -p "Enter a valid date (yy-mm-dd): " user_date
         user_date=$(printf "20%s" "$user_date" | sed 's/[^0-9a-zA-Z]/-/g' | \
-                    grep "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9]") || continue
+                    grep "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]") || continue
         # Timestamps to compare
-        today=$(date -d "today" +%s)
+        yesterday=$(date -d "yesterday" +%s)
         user_date_num=$(date -d "$user_date" +%s) || continue
-        if [[ $user_date_num -ge "$today" ]]; then
+        if [[ $user_date_num -gt "$yesterday" ]]; then
             printf "(%s)" "$user_date"
             break
         fi
