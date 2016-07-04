@@ -52,8 +52,9 @@ notify() {
         done
     done
     # Only unique tasks (multiples happen if multiple tasks have the same due
-    # date)
-    close_tasks=$(printf "%s" "$close_tasks" | sort | uniq)
+    # date) and ordered by date
+    close_tasks=$(printf "%s" "$close_tasks" | awk '{print $NF, $0}' | \
+                  sort -nk1 | cut -d " " -f2- | uniq)
 
     # Send a notification for all tasks due soon
     if [[ -n "$close_tasks" ]]; then
