@@ -67,6 +67,16 @@ switch_taskfile() {
     fi
 }
 
+# Opens taskfile in editor setting a default
+edit_taskfile() {
+    if [[ -z "$EDITOR" ]]; then
+        printf "\$EDITOR not set, defaulting to nano.\n"
+        sleep 2
+        EDITOR="nano"
+    fi
+    "$EDITOR" "$TASKFILE"
+}
+
 # Removes a taskfile
 # Argument: filename
 remove_taskfile() {
@@ -124,7 +134,7 @@ if [[ $@ ]]; then
     t)  switch_taskfile "$2"
         ;;
     # Open TASKFILE in editor
-    e)  "$EDITOR" "$TASKFILE"
+    e)  edit_taskfile
         ;;
     # Remove a taskfile
     r)  remove_taskfile "$2"
