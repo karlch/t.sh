@@ -160,7 +160,18 @@ To completely change the text of one task run `t c $tasknum the new text`.
     3) Learn how to use latex beamer  (2017-07-14)
     $
 
-As you can see the entered date can be preserved or changed.
+As you can see the entered date can be preserved or changed. If only the date
+should be changed run `t C $tasknum`
+
+    $ t C 3
+    Enter a valid date (yy-mm-dd): 17-07-12
+    $ t
+    Tasks in demolist
+    ────────────────────────────────────────────────────────────────────────────────
+    1) Visit the restaurant at the end of the universe
+    2) Come back to mars early!  (2018-04-02)
+    3) Learn how to use latex beamer  (2017-07-12)
+    $
 
 **Substitute string in task**
 

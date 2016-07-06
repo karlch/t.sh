@@ -110,12 +110,18 @@ change_task() {
         printf "\n" >&2
 
         if [[ $keep_date == "n" || $keep_date == "N" ]]; then
-            new_date=$(read_date)
-            sed -i "$tasknum s/(20[0-9][0-9]-[0-9][0-9]-[0-9][0-9])/$new_date/" "$TASKFILE"
+            change_date "$tasknum"
         fi
     else
         sed -i "$tasknum s/.*/$new_text/g" "$TASKFILE"
     fi
+}
+
+# Function to change the task date
+# Argument: tasknum
+change_date() {
+    new_date=$(read_date)
+    sed -i "$1 s/(20[0-9][0-9]-[0-9][0-9]-[0-9][0-9])/$new_date/" "$TASKFILE"
 }
 
 # Check if an argument was given
@@ -141,6 +147,9 @@ if [[ $@ ]]; then
         ;;
     # Change the task completely
     c)  change_task "$2" "${*:3}" > /dev/null
+        ;;
+    # Only change date
+    C)  change_date "$2" > /dev/null
         ;;
     # Sed substitution to edit the task
     s)  sed -i "$2 s/$3/${*:4}/g" "$TASKFILE"
