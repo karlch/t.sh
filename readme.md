@@ -1,6 +1,6 @@
 ### t, a simple command line tasklist manager
 
-## Version 0.1 (unreleased)
+## Version 0.1
 
 t comes with two scripts:
 
