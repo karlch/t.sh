@@ -12,21 +12,20 @@ if [[ $(find $TASKDIR | wc -l) -lt 2 ]]; then
     exit 1
 fi
 
-# The actual function
-# Checks for dates that are close and sends a notification containing the task
-# due and the date
-# Arguments: TASKFILE
-notify() {
+# Dates that are close
+today=$(date '+%F')
+tomorrow=$(date -d "+1 day" '+%F')
+in_two_days=$(date -d "+2 days" '+%F')
+close_dates="$today $tomorrow $in_two_days"
+
+# Checks for dates that are close and returns the corresponding tasks
+# Argument: TASKFILE
+get_tasks() {
     TASKFILE=$TASKDIR/$1
 
-    # Get the due_dates
-    due_dates=$(grep -o '20[0-9][0-9]\-[0-9][0-9]\-[0-9][0-9]' "$TASKFILE")
-
-    # Dates that are close
-    today=$(date '+%F')
-    tomorrow=$(date -d "+1 day" '+%F')
-    in_two_days=$(date -d "+2 days" '+%F')
-    close_dates="$today $tomorrow $in_two_days"
+    # Get the due_dates and only once
+    due_dates=$(grep -o '20[0-9][0-9]\-[0-9][0-9]\-[0-9][0-9]' "$TASKFILE" | \
+                sort | uniq)
 
     # Check for matches
     close_tasks=""
@@ -34,38 +33,55 @@ notify() {
         for close_date in $close_dates; do
             if [[ $due_date == "$close_date" ]]; then
                 # If dates match remember the corresponding task formatted
-                # neatly
-                close_task=$(grep "$due_date" "$TASKFILE")
-
-                case "$due_date" in
-                    $today)         due_format="(today)" ;;
-                    $tomorrow)      due_format="(tomorrow)" ;;
-                    $in_two_days)   due_format="(in 2 days)" ;;
-                esac
-
-                # Use $1 here because this is the short name
-                close_task=$(printf "%s: %s" "$1" "$close_task" | \
-                             sed "s/($due_date)/$due_format/")
+                # neatly including the taskfile name
+                close_task=$(grep "$due_date" "$TASKFILE" | \
+                             sed "s/^/$1: /")
 
                 close_tasks=$close_tasks$close_task$'\n'
             fi
         done
     done
-    # Only unique tasks (multiples happen if multiple tasks have the same due
-    # date) and ordered by date
-    close_tasks=$(printf "%s" "$close_tasks" | awk '{print $NF, $0}' | \
-                  sort -nk1 | cut -d " " -f2- | uniq)
 
-    # Send a notification for all tasks due soon
-    if [[ -n "$close_tasks" ]]; then
-        while read -r task; do
-            notify-send -u critical -h string:iconname:"$TASKFILE" "$task"
-        done <<< "$close_tasks"
-    fi
+    printf "%s" "$close_tasks"
 }
 
-# Notify for each taskfile
-while read -r taskfile; do
-    notify "$taskfile"
-done <<< \
-    "$(find $TASKDIR -mindepth 1 -name "taskfile" -prune -o -printf "%f\n")"
+# Formats and sorts the tasks sending notifications at the end
+# Arguments: close_tasks, debugfile
+notify() {
+    # Order tasks by date and format neatly with sed
+    close_tasks=$(printf "%s" "$1" | awk '{print $NF, $0}' | \
+                  sort -nk1 | cut -d " " -f2- | \
+                  sed "s/$today/today/" | \
+                  sed "s/$tomorrow/tomorrow/" | \
+                  sed "s/$in_two_days/in two days/")
+
+    # Send a notification for all tasks due soon
+    while read -r task; do
+        # The debug option is necessary for testing
+        if [[ -n $2 ]]; then
+            printf "%s\n" "$task" >> "$2"
+        else
+            notify-send -u critical "$task"
+        fi
+    done <<< "$close_tasks"
+}
+
+# Main function which runs the other two
+# Argument: files, debugfile
+main() {
+    # Get tasks which are due soon
+    all_close_tasks=""
+    while read -r taskfile; do
+        all_close_tasks=$all_close_tasks$(get_tasks "$taskfile")$'\n'
+    done <<< \
+        "$1"
+
+    # Remove blanks
+    all_close_tasks=$(printf "%s" "$all_close_tasks" | grep '[^[:blank:]]')
+
+    # Send notifications
+    notify "$all_close_tasks" "$2"
+}
+
+# Run main on all files
+main "$(find $TASKDIR -mindepth 1 -name "taskfile" -prune -o -printf "%f\n")"
