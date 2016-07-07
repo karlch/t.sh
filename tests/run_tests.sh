@@ -1,12 +1,17 @@
 #!/bin/bash
 
-shell_files="t.sh t_notify.sh tests/general_test.sh tests/run_tests.sh"
-test_files="t.sh"
+printf "Starting testsuite.\n"
+cd "$(dirname "$0")"/.. || exit 1
+
+shell_files="$(find . -name "*.sh")"
+test_files="t.sh t_notify.sh"
 
 # Run test for file $1
 run_tests() {
     case "$1" in
-        "t") tests/general_test.sh || exit 1
+        "t.sh") tests/t_test.sh || exit 1
+            ;;
+        "t_notify.sh") tests/t_notify_test.sh || exit 1
             ;;
     esac
 }
@@ -16,9 +21,6 @@ run_shellcheck() {
     shellcheck "$1" || exit 1
     printf 'Shellcheck for "%s" ran successfully.\n' "$1"
 }
-
-printf "Starting testsuite.\n"
-cd "$(dirname "$0")"/.. || exit 1
 
 for file in $shell_files; do
     run_shellcheck "$file"

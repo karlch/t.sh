@@ -65,6 +65,6 @@ run_tests() {
     ../t.sh | grep "main" || exit_tests "Switch to main failed."
 }
 
-printf "Running tests.\n...\n"
+printf "Running tests for t.sh.\n...\n"
 run_tests 1>/dev/null
 printf "Tests finished succesfully.\n"
